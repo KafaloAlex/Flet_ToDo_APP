@@ -7,6 +7,19 @@ def main(page: ft.Page):
     FG = '#3450A1'
     PINK = '#EB06FF'
 
+    create_task_view = ft.Container(
+        # width=300, 
+        # height=600, 
+        # bgcolor=BG,
+        # border_radius=35,
+        content=ft.Container(
+            height=40,
+            width=40,
+            content=ft.Text('x'),
+            on_click= lambda _:page.go('/')
+        )
+    )
+
     # Section des cartes 
     categories_card = ft.Row(
         scroll='auto'
@@ -23,7 +36,7 @@ def main(page: ft.Page):
         categories_card.controls.append(
             ft.Container(
                 bgcolor=BG,
-                height=105,
+                height=90,
                 width=160,
                 border_radius=20,
                 padding=13,
@@ -47,7 +60,18 @@ def main(page: ft.Page):
         )
         
     # Tasks
-    # tasks = None
+    tasks = ft.Column(
+        scroll='auto',
+        height=230
+    )
+
+    for i in range(10):
+        tasks.controls.append(
+            ft.Container(
+                height=40,
+                bgcolor=BG, border_radius=15
+            )
+        )
     # End Tasks
 
     first_page_content = ft.Container(
@@ -77,9 +101,11 @@ def main(page: ft.Page):
                 ft.Text("TODAY'S TASKS"),
                 ft.Stack(
                     controls=[
-                        # tasks,
+                        tasks,
                         ft.FloatingActionButton(
-                            icon=ft.icons.ADD
+                            icon=ft.icons.ADD, 
+                            on_click=lambda _:page.go('/create_task'),
+                            bottom=2, right=20
                         )
                     ]
                 )
@@ -120,6 +146,28 @@ def main(page: ft.Page):
         )
     )    
 
+    pages = {
+        '/':ft.View(
+            "/", 
+            [
+                container
+            ]
+        ),
+        '/create_task': ft.View(
+            "/create_task", 
+            [
+                create_task_view
+            ]
+        )
+    }
+
+    def route_change(route):
+        page.views.clear()
+        page.views.append(pages[page.route])
+
+
     page.add(container)
+    page.on_route_change = route_change
+    page.go(page.route)
 
 ft.app(target=main, view=ft.AppView.WEB_BROWSER)
